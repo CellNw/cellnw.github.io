@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+    <title>Szl&#x27;s Blog</title>
+    <link href="https://cellnw.github.io/cellnw.github.io/feed.xml" rel="self" />
+    <link href="https://cellnw.github.io/cellnw.github.io" />
+    <updated>2022-12-17T21:34:15+08:00</updated>
+    <author>
+        <name>Szl</name>
+    </author>
+    <id>https://cellnw.github.io/cellnw.github.io</id>
+
+    <entry>
+        <title>Attention Is All You Need</title>
+        <author>
+            <name>Szl</name>
+        </author>
+        <link href="https://cellnw.github.io/cellnw.github.io/attention-is-all-you-need.html"/>
+        <id>https://cellnw.github.io/cellnw.github.io/attention-is-all-you-need.html</id>
+
+        <updated>2022-12-17T21:34:15+08:00</updated>
+            <summary>
+                <![CDATA[
+                    Attention Is All You Need Abstract 目前主流的序列推导模型是基于复杂的循环或者包含边解码器的卷积神经网络。效果最好的模型通过注意力机制连接编解码器。我们提出一种新型的简单网络结构—-Transformer，仅基于注意力机制，完全移除了循环和卷积结构。对两个机器翻译任务的实验表明，这些模型在质量上更优越，同时更可并行化，并且需要的训练时间显着减少。对模型质量和训练速度的提升进行详细介绍。 介绍了循环神经网络，长短期记忆和门控循环神经网络。指出这些网络不适合并行化。 本文提出了 Transformer ，这是一种模型架构，避免了递归，而是完全依赖注意力机制来描绘输入和输出之间的全局依赖关系。Transformer 运行更多的并行化。 指出目前的模型例如 ByteNet 和 ConvS2S ，关联模型中任意两个位置的输出所需要的操作数随着这两个位置的增长而增长，ConvS2S 是线性增长而 ByteNet 是指数级增长。这就导致了模型很难学习距离较远位置元素之间的关联。在 Transformer 只需要常数的操作数，尽管代价是由于注意力加权位置的平均化而降低了有效分辨率，我们在 3.2 节中将会描述如何使用多头注意力来抵消这种影响。 自注意力也称内部注意力是一种与单一序列的不同位置相关的注意机制，以便计算出序列的表征。介绍了一下自注意力机制的应用。 端到端记忆网络是基于递归注意机制，而不是顺序排列的递归，并已被证明在简单语言问题回答和语言建模任务中表现良好。 然而，据我们所知，Transformer 是第一个完全依靠自我注意来计算其输入和输出的表征而不使用序列对齐的RNN 或卷积的转导模型。在下面的章节中，我们将描述 Transformer，激励自我注意，并讨论与其他模型相比的优势。 大多数复杂的神经序列推导模型具有编解码器结构。编码器把由符号表示$(x_{1},…,x_{n})$的输入序列映射到一系列的连续表示$z=(z_{1},…,z_{n})$ 。给定 $z$ ，解码器一个接一个生成输出输出序列符号 $(y_{1},…,y_{n})$ 。在每一步，模型都是自回归的，当生成下一个符号时会使用之前产生的符号作为附加输入。 Transformer 遵循这种整体架构，对编码器和解码器使用堆叠的自注意力和逐点全连接层，分别如图 1 的左右半部分所示。 Encoder ：编码器由 $N=6$ 个相同的层组成。每一层具有两个子层。第一层是多头注意力机制，第二层是简单的、位置上的全连接的前馈网络。我们在每个子层前后使用残差连接之后是层归一化。也就是说，每个子层的输出就是 $\text{LayerNorm}(x+\text{SubLayer}(x))$&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <h3 id="attention-is-all-you-need">Attention Is All You Need</h3>
+<h4 id="abstract">Abstract</h4>
+<p>目前主流的序列推导模型是基于复杂的循环或者包含边解码器的卷积神经网络。效果最好的模型通过注意力机制连接编解码器。我们提出一种新型的简单网络结构—-Transformer，仅基于注意力机制，完全移除了循环和卷积结构。对两个机器翻译任务的实验表明，这些模型在质量上更优越，同时更可并行化，并且需要的训练时间显着减少。对模型质量和训练速度的提升进行详细介绍。</p>
+<h4 id="1-introduction">1 Introduction</h4>
+<p>介绍了循环神经网络，长短期记忆和门控循环神经网络。指出这些网络不适合并行化。</p>
+<p>本文提出了 Transformer ，这是一种模型架构，避免了递归，而是完全依赖注意力机制来描绘输入和输出之间的全局依赖关系。Transformer 运行更多的并行化。</p>
+<h4 id="2-background">2 Background</h4>
+<p>指出目前的模型例如 ByteNet 和 ConvS2S ，关联模型中任意两个位置的输出所需要的操作数随着这两个位置的增长而增长，ConvS2S 是线性增长而 ByteNet 是指数级增长。这就导致了模型很难学习距离较远位置元素之间的关联。在 Transformer 只需要常数的操作数，尽管代价是由于注意力加权位置的平均化而降低了有效分辨率，我们在 3.2 节中将会描述如何使用多头注意力来抵消这种影响。</p>
+<p>自注意力也称内部注意力是一种与单一序列的不同位置相关的注意机制，以便计算出序列的表征。介绍了一下自注意力机制的应用。</p>
+<p>端到端记忆网络是基于递归注意机制，而不是顺序排列的递归，并已被证明在简单语言问题回答和语言建模任务中表现良好。</p>
+<p>然而，据我们所知，Transformer 是第一个完全依靠自我注意来计算其输入和输出的表征而不使用序列对齐的RNN 或卷积的转导模型。在下面的章节中，我们将描述 Transformer，激励自我注意，并讨论与其他模型相比的优势。</p>
+<h4 id="3-model-architecture">3 Model Architecture</h4>
+<p>大多数复杂的神经序列推导模型具有编解码器结构。编码器把由符号表示$(x_{1},…,x_{n})$的输入序列映射到一系列的连续表示$z=(z_{1},…,z_{n})$ 。给定 $z$ ，解码器一个接一个生成输出输出序列符号 $(y_{1},…,y_{n})$  。在每一步，模型都是自回归的，当生成下一个符号时会使用之前产生的符号作为附加输入。</p>
+<p>Transformer 遵循这种整体架构，对编码器和解码器使用堆叠的自注意力和逐点全连接层，分别如图 1 的左右半部分所示。</p>
+<center>
+    <img loading="lazy" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211252115341.png" width = "60%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图 1:Transformer 模型结构
+    </div>
+</center>
+
+<h5 id="31-encoder-and-decoder-stacks">3.1 Encoder and Decoder Stacks</h5>
+<p><strong>Encoder</strong> ：编码器由 $N=6$ 个相同的层组成。每一层具有两个子层。第一层是多头注意力机制，第二层是简单的、位置上的全连接的前馈网络。我们在每个子层前后使用残差连接之后是层归一化。也就是说，每个子层的输出就是 $\text{LayerNorm}(x+\text{SubLayer}(x))$ ，其中 $\text{SubLayer}(x)$ 是子层本身所表示的函数。为了便于这些残差连接，模型中所有的子层都会产生维度 $d_{\text{model}}=512$ 的输出。</p>
+<p> <strong>Decoder</strong>：解码器同样由 $N=6$ 个相同的层组成。除了每个编码器层中的两个子层之外，解码器还插入了第三个子层，他对编码器堆栈的输出执行多头注意力。和编码器一样，我们使用残差连接每一个子层的前后，之后是层归一化。我们还修改了解码器堆栈中的自注意力子层，以防止位置关注后续位置。这种掩码与输出嵌入位置偏移的组合确保对位置 i 的预测只取决于小于 i 的位置的已知输出。</p>
+<h5 id="32-attention">3.2 Attention</h5>
+<p>注意力的功能可以被描述为把 query 和一组 key-value 对映射成一个输出，其中 query、key、value 和输出都是向量。输出是由 value 加权求和得到，其中分配给每个 value 的权重是由 query 和相应的 key 的兼容函数计算出来的。</p>
+<center>
+    <span id="fig2"></span>
+    <img loading="lazy" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211252114478.png" width = "100%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图 2:(左)缩放点积注意力。（右）多头注意力由并行运行的几个注意力层组成。
+    </div>
+</center>
+
+
+<h6 id="321-scaled-dot-product-attention">3.2.1 Scaled Dot-Product Attention</h6>
+<p>我们称我们这种特殊的注意力机制为“缩放点积注意力（Scaled Dot-Product Attention）”（如图二）。输入由 query、维度为 $d_{k}$ 的 keys 和维度为 $d_{v}$ 的 values 组成。我们在 query 和所有的 keys 之间做点乘，之后除以 $\sqrt{d_{k}}$ 然后经过 softmax 函数后获得的值做为 values 的权重。</p>
+<p>在实际操作中，我们计算注意力函数同时在一组 query 上，将它们打包成一个矩阵 $Q$ 。 keys 和 values 同样打包成矩阵 $K$ 和 $V$ 。我们使用下式计算结果矩阵：
+$$
+\text{Attention}(Q, K, V)=\text{softmax}(\frac{QK^{T}}{\sqrt{d_{k}}})V
+$$
+两种最常用的注意力函数是加法注意力和点积（乘法）注意力。除了 $\frac{1}{\sqrt{d_{k}}}$ 外点积注意力与我们的算法相同。加法注意力包含一个隐藏层的前馈函数计算兼容性函数。尽管两种方式具有相似的理论复杂度，但是点乘注意力使用编码上更加优化的矩阵乘法所以在实践中运行更快并有更高的空间利用率。</p>
+<p> 虽然对于较小的 $d_{k}$ 两者的表现相似，但在较大的 $d_{k}$ 时，加法注意力要优于没有缩放机制的点乘注意力。我们认为在较大的 $d_{k}$ 时，点乘以数量级增长，将 softmax 函数推入梯度极小的区域。为了抵抗这种影响，我们使用 $\frac{1}{\sqrt{d_{k}}}$ 缩放点乘结果。</p>
+<h6 id="322-multi-head-attention">3.2.2 Multi-Head Attention</h6>
+<p>我们发现与其用 $d_{\text{model}}$ 维的 keys、values 和 queries 来执行一个单一的注意力函数，不如用不同的、学习过的线性投影来将 queries、keys 和 values 分别投影到 $d_{k}$、$d_{k}$ 和 $d_{v}$ 维。在每个 queries、keys 和 values 的每个投影版本上，我们并行执行注意力函数，产生 $d_{v}$ 维输出值。这些数据被连接起来并再次进行投影，从而得到最终值，如图二所示</p>
+<p>多头注意允许模型在不同的位置上共同关注来自不同表征子空间的信息。在单头注意的情况下，平均化抑制了这一点。</p>
+<p><figure class="post__image"><img loading="lazy" src="https://raw.githubusercontent.com/CellNw/blog-img/master/202212172133992.png" alt=""  data-is-external-image="true"></figure></p>
+<p>其中投影由参数矩阵 $W_{i}^{Q}\in\mathbb{R}^{d_{\text{model}}\times d_{k}}$ ，$W_{i}^{K}\in\mathbb{R}^{d_{\text{model}}\times d_{k}}$，$W_{i}^{V}\in\mathbb{R}^{d_{\text{model}}\times d_{v}}$ 和 $W^{O}\in\mathbb{R}^{hd_{v}\times d_{\text{model}}}$ 确定。</p>
+<p>在本文中我们包含 $h=8$ 的并行注意力层或者说头。对于它们的每一个我们使用 $d_{k}=d_{v}=d_{\text{model}}/h=64$ 。由于在每一个头中都减小了维度，总的计算消耗小于在单个头上计算完整的维度。</p>
+<h6 id="323-applications-of-attention-in-our-model">3.2.3 Applications of Attention in our Model</h6>
+<p>Transformer 使用多头注意力的三种方式：</p>
+<ul>
+<li>在“编码-解码注意力”层，queries 由上一解码层得到并且存储由编码器输出的 keys 和 values。这使得解码器中的每个位置都能在输入序列的所有位置上参加。这模拟了序列到序列模型中典型的编码器-解码器注意机制。</li>
+<li>编码器包含自注意力层。在自注意力层中所有的 keys、values 和 queries 都来之相同的地方，在本例中，所有的输出来自前一层的编码器。编码器中的每个位置都能关注到编码器上一层的所有位置。</li>
+<li>同样的，解码器中的自注意力层允许所有位置都能关注到包含自身在内的所有位置。我们需要防止信息流在在解码器中左移动以保持自回归特性。我们通过在缩放点积注意力中屏蔽（设置为$-\infty$） softmax 输入中对应与非法连接的所有值。如<a href="#fig2">图二</a>所示。</li>
+</ul>
+<h5 id="33-position-wise-feed-forward-networks">3.3 Position-wise Feed-Forward Networks</h5>
+<p>除了注意力子层，在编解码器的所有层包含一个全连接的前馈神经网络，它对于每个位置都是独立且相同的。这个全连接网络包含两个线性转换并在中间使用 ReLU 激活函数。
+$$
+\text{FFN}(x)=\max(0, xW_{1}+b_{1})W_{2}+b_{2}
+$$
+在不同的位置上使用相同的类型的线性变换，但是在层与层之间是不同的。另外一种描述是使用两个核大小为1的卷积。其中输入输出的维度均为 $d_{\text{model}}=512$ ，中间层的维度为 $d_{ff}=2048$ 。</p>
+<h5 id="34-embeddings-and-softmax">3.4 Embeddings and Softmax</h5>
+<p>与其他序列转换模型类似，我们使用被学习过的嵌入把输入和输出标记（tokens）转换成维度为 $d_{\text{model}}$ 的向量。我们还使用常用的线性变换和 softmax 函数把编码器的输出转换成被预测的下一个标记（tokens）的可能性。在我们的模型中，我们在两个嵌入层和 pre-softmax 线性变换中共享权重矩阵，类似此<a href="https://arxiv.org/abs/1608.05859">论文</a>。在嵌入层我们把这些权重乘上 $\sqrt{d_{\text{model}}}$。</p>
+<h5 id="35-positional-encoding">3.5 Positional Encoding</h5>
+<p>由于我们的模型不包含递归和卷积，为了让模型利用序列的顺序，必须注入一些关于序列中标记（tokens）的相对或绝对位置信息。为此，我们在编解码器栈底部的输入嵌入中添加了 “Positional Encoding（位置编码）”。位置编码与嵌入（embeddings）具有相同的维度 $d_{\text{model}}$ ，所以这两者可以进行相加。实现位置编码有许多选择，可学习的或固定的。</p>
+<p>在本文中，我们使用不同频率的正弦和余弦函数：
+$$
+PE_{(pos, 2i)}=sin(pos/10000^{2i/d_{model}})
+$$
+$$
+PE_{(pos,2i+1)}=cos(pos/10000^{2i/d_{model}})
+$$
+其中 $pos$ 是位置，$i$ 是维度。也就是说，位置编码的每个维度对应一个正弦信号。波长从 $2\pi$ 到 $10000\cdot 2\pi$ 的几何级数。我们假设这个函数能使模型能够容易学习去关注相对位置关系，因为对于任何固定的偏置量 $k$，$PE_{pos+k}$ 可以表示为 $PE_{pos}$ 的线性函数。</p>
+<p>我们还尝试使用了可学习的位置嵌入，最终两者产生了几乎相同的结果（见表3行E）。我们选择了正弦版本，因为它能够处理比训练时更长的序列。</p>
+<center>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      表 1:不同层类型的最大路径长度，每层复杂度和最小序列操作数。其中 n 是序列长度，d 是表示维度（representation dimension），k 是卷积核大小，r 是有限自注意力中的邻域大小。
+    </div>
+    <img loading="lazy" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202212170928961.png" width = "100%" alt="" data-is-external-image="true">
+    <br>
+</center>
+
+
+<h4 id="4-why-self-attention">4 Why Self-Attention</h4>
+<p> 在本节中我们比较了自注意力层与递归和卷积层进行比较，这些层通常用来把可变长度的符号表示序列 $(x_{1},…,x_{n})$ 转换成另一个长度相等的序列 $(z_{1},…,z_{n})$，其中 $x_{i},z_{i}\in\mathbb{R}^{d}$ ，比如典型序列转导编码或解码器中的隐藏层。使用自注意力是由于三个需求。</p>
+<p>第一是每一层的总计算复杂度。第二是计算的并行化程度，以所需的最小顺序操作数衡量。</p>
+<p>第三是网络中远程依赖关系之间的路径长度。学习远程依赖是许多序列转导任务中的一项关键挑战。影响学习这种依赖关系能力的一个关键因素是向前和向后信号在网络中必须遍历的路径长度。输入和输出序列中任意位置组合之间的路径越短，就越容易学习远程依赖关系。因此我们比较了不同神经网络层中任意两个输入和输出的最大路径长度。</p>
+<p>如表 1 所示，自注意力层连接所有的位置使用常数级的顺序操作，然而循环层需要 $O(n)$ 的顺序操作。在操作复杂度方面，当序列长度 $n$ 小于表示维度 $d$ 时（这是在机器翻译中，最先进的模型使用的句子表示例如 word-piece 和 byte-pair 表示通常出现的情况）注意力层比循环层更快。为了提高涉及很长序列的任务的计算性能，自注意力可以被限制为只考虑输入序列中以各自输出位置为中心的大小为r的邻域。这将会增加最大路径长度到 $O(n/r)$ 。我们计划在未来的工作中进一步研究这种方法。</p>
+<p>单一的卷积层当 $k&lt;n$ 时无法连接所有位置上的输入输出对。为了连接任意位置在连续核的情况下需要有 $O(n/k)$ 个卷积层堆栈或者需要 $O(log_{k}(n))$ 层扩张卷积（dilated convolutions），同时增加网络中任意两个位置之间的最长路径的长度。卷积层通常比循环层更加昂贵，相差 $k$ 倍。虽然，可分离卷积大幅减少了复杂度至 $O(k\cdot n\cdot d+n\cdot d^{2})$ 。但是当 $k=n$ 时，可分离卷积的复杂度与一个自注意层加一个逐点前馈层（point-wise feed-forward layer）相等，这是在本模型中使用的操作。</p>
+<p>作为附带的好处，自注意力层可以产生更具有解释性的模型。我们检查模型和注意力分布，并在附录中展示和讨论示例。单个注意力头明显学会了执行不同的任务，而且多头注意力似乎还表现出与句子的句法和语义结构有关的行为。</p>
+<h4 id="5-training">5 Training</h4>
+<p>本节描述了如何训练本模型，略</p>
+<h4 id="6-results">6 Results</h4>
+<p>本节展示了模型在不同任务上的表现，略</p>
+<h4 id="7-conclusion">7 Conclusion</h4>
+<p>总结，略</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</title>
+        <author>
+            <name>Szl</name>
+        </author>
+        <link href="https://cellnw.github.io/cellnw.github.io/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale.html"/>
+        <id>https://cellnw.github.io/cellnw.github.io/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale.html</id>
+
+        <updated>2022-11-22T20:28:35+08:00</updated>
+            <summary>
+                <![CDATA[
+                    CVPR 2020 当 Transformer 结构成为自然语言处理的标准时，它在机器视觉方面的应用是受限的。在机器视觉领域注意力要么与卷积神经网络组合使用，要么替换卷积网络的某些组件同时保存其整体网络结构。我们表明，这种对 CNN 的依赖是不必要的，直接应用图像补丁序列的纯转换器可以在图像分类中表现得很好。 介绍了一下注意力机制在自然语言处理上的应用，指出 Transformer 拥有卓越的性能。 本文尝试直接将标准Transformer 应用于图像，尽可能得少修改。为此，我们将图像分割为小块，并将这些小块的线性嵌入序列作为 Transformer 的输入。图像块已与 NLP 应用程序中的标记相同的方式处理。并发现 ViT 在中型规模的数据集上不如 ResNet ，但在大型数据集比如 ImageNet-21k 上超过最先进的水平。 指出以前的 Transformers 不能很好得在已有的加速硬件上工作，或者只能在低分辨率图片上使用。 在模型设计中，尽可能遵循原始 Transformer。 图1是模型的整体框架。标准 Transformer 的输入是一个一维嵌入 token 的序列。为了处理二维的图片，我们把图像 $x\in\mathbb{R}^{H\times W\times C}$ 重塑成一个被展平的二维补丁序列（patches）$x_{p}\in\mathbb{R}^{N\times(P^{2}\cdot C)}$ ，其中 $(H,W)$ 是原始图像的分辨率，$C$ 是通道数，$(P,P)$ 是图像补丁的解析度。并且 $N=HW/P^{2}$ 是结果的补丁（patches）数量，这也作为 Transformer&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <blockquote>
+<p>CVPR 2020</p>
+</blockquote>
+<h4 id="摘要">摘要</h4>
+<p>当 Transformer 结构成为自然语言处理的标准时，它在机器视觉方面的应用是受限的。在机器视觉领域注意力要么与卷积神经网络组合使用，要么替换卷积网络的某些组件同时保存其整体网络结构。我们表明，这种对 CNN 的依赖是不必要的，直接应用图像补丁序列的纯转换器可以在图像分类中表现得很好。</p>
+<h4 id="1-简介">1 简介</h4>
+<p>介绍了一下注意力机制在自然语言处理上的应用，指出 Transformer 拥有卓越的性能。</p>
+<p>本文尝试直接将标准Transformer  应用于图像，尽可能得少修改。为此，我们将图像分割为小块，并将这些小块的线性嵌入序列作为 Transformer 的输入。图像块已与 NLP 应用程序中的标记相同的方式处理。并发现 ViT 在中型规模的数据集上不如 ResNet ，但在大型数据集比如 ImageNet-21k 上超过最先进的水平。</p>
+<h4 id="2-相关工作">2 相关工作</h4>
+<p>指出以前的 Transformers 不能很好得在已有的加速硬件上工作，或者只能在低分辨率图片上使用。</p>
+<center>
+    <img loading="lazy"     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08); 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211211615384.png" width = "90%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图1:模型的整体框架。我们首先将图片切分成若干块（patches），再线性得嵌入它们并添加位置编码。然后再将它们当作向量序列放入标准的 Transformer 编码器中。为了执行分类任务，我们使用标准方法：增加可学习的”分类标识（classification token）”到序列中。
+    </div>
+</center>
+
+
+<h4 id="3-方法">3 方法</h4>
+<p>在模型设计中，尽可能遵循原始 Transformer。</p>
+<h5 id="31-vision-transformer（vit）">3.1 Vision Transformer（ViT）</h5>
+<p>图1是模型的整体框架。标准 Transformer 的输入是一个一维嵌入 token 的序列。为了处理二维的图片，我们把图像 $x\in\mathbb{R}^{H\times W\times C}$ 重塑成一个被展平的二维补丁序列（patches）$x_{p}\in\mathbb{R}^{N\times(P^{2}\cdot C)}$ ，其中 $(H,W)$ 是原始图像的分辨率，$C$ 是通道数，$(P,P)$ 是图像补丁的解析度。并且 $N=HW/P^{2}$ 是结果的补丁（patches）数量，这也作为 Transformer 输入的有效序列长度。The Transformer uses constant latent vector size D through all of its layers, so we flatten the patches and map to D dimensions with a trainable linear projection (Eq. 1).我们将此投影的输出称为补丁嵌入。</p>
+<p>与 BERT 的 [class] 令牌相似，我们在嵌入补丁的序列中预置一个可学习的嵌入（$Z_{0}^{0}=X_{\text{class}}$）,其在 Transformer 编码器的输出状态（$Z_{L}^{0}$）用作图像表示 $y$ 。在预训练和微调期间，分类头都附加到$Z_{L}^{0}$ 。分类头在预训练时由具有一个隐藏层的 MLP 实现，在微调时由单个线性层实现。</p>
+<p>位置嵌入被添加到 patch embedding 以保留位置信息。使用标准的可学习一维位置嵌入，因为没有观察到更高级的二维感知位置嵌入的显著性能提升。生成的嵌入向量序列用作编码器的输入。</p>
+<p>Transformer 编码器由交替的多头自注意力（MSA）和 MLP 块组成。Layernorm（LN）在每隔块之前应用，每个块之后应用残差连接。</p>
+<center>
+    <img loading="lazy"     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08); 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211220956701.png" width = "100%" alt="" data-is-external-image="true">
+</center>
+
+<p><strong>归纳偏置</strong> 我们注意到 ViT 比 CNN具有更少的图像特定的归纳偏置，在 CNN 中 局部性、二维领域结构和平移不变包含在模型的每一层中。在 ViT 中，只有 MLP 层具有局部性和平移不变性。然而自注意力机制是全局的。二维邻域结构仅在模型开始时，把图像分割成 patches 和在微调时调整不同分辨率的图像位置嵌入时使用。</p>
+<p><strong>混合架构</strong> 作为原始图像补丁的替代方案，输入序列可以由 CNN 的特征图形成。在这个混合模型中，补丁嵌入投影 E （公式1）应用于从 CNN 特征图提取的补丁。</p>
+<p><strong>3.2 微调和更高的分辨率</strong></p>
+<p>典型的情况是我们在大型的数据集上预训练 ViT 然后对它进行微调去适应（更小的）下游任务。我们去掉了预训练好的预测头，并加入了一个零初始化的 $D\times K$ 前馈层。其中 $K$ 是下游任务的分类数量。使用比预训练时更高的分辨率进行微调是有益的。当输入的图像具有更高的分辨率时，我们保持 patch 的大小不变，从而产生了更大的有效序列长度。ViT 可以处理任意的序列长度（直到内存限制），但是，预训练好的位置嵌入可能不再有意义了。因此，我们根据它们在原始图像中的位置对预训练的位置嵌入进行二维插值。请注意，这种分辨率调整和补丁提取是手动将图像二维结构的归纳偏置注入 ViT 的唯一点。</p>
+
+            ]]>
+        </content>
+    </entry>
+    <entry>
+        <title>Fixing Data Augmentation to Improve Adversarial Robustness</title>
+        <author>
+            <name>Szl</name>
+        </author>
+        <link href="https://cellnw.github.io/cellnw.github.io/fixing-data-augmentation-to-improve-adversarial-robustness.html"/>
+        <id>https://cellnw.github.io/cellnw.github.io/fixing-data-augmentation-to-improve-adversarial-robustness.html</id>
+
+        <updated>2022-11-22T21:02:33+08:00</updated>
+            <summary>
+                <![CDATA[
+                    Abstract 本文主要关注如何使用启发式驱动增强（Pad &amp; Crop，Cutout，MixUp，CutMix）和数据式驱动增强（VDVAE，BigGAN，DDPM）提升模型鲁棒性。 本文通过组合使用 model weight averaging 和 data augmentation 大幅提高了鲁棒准确性。 本文探索了如何利用最先进的生成模型来人为地增加数据集大小。 最终在 $\epsilon=8/255$ 的 $l_\infty$ 和 $\epsilon=128/255$ 的 $l_0$ 范数的约束的对抗样本攻击下，比 SOTA 方法分别提升了 $7.06%$ 和 $5.88%$ 。 介绍了一下对抗样本，并指出对抗训练是目前最有效的防御方法。 本文贡献： 展示了当与 model weight averaging 结合时，启发式驱动的增强技术，如 Cutout、CutMix 和 MixUp 如何提高鲁棒性。 与前人尝试了数据增强但是都没有成功相反，本文能够通过上述三种技术的任意一种来获得新的 SOTA 鲁棒性精度。并发现 CutMix 是最有效的方法，它在 CIFAR10&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <h4 id="abstract">Abstract</h4>
+<p>本文主要关注如何使用启发式驱动增强（Pad &amp; Crop，Cutout，MixUp，CutMix）和数据式驱动增强（VDVAE，BigGAN，DDPM）提升模型鲁棒性。</p>
+<p>本文通过组合使用 model weight averaging 和 data augmentation 大幅提高了鲁棒准确性。</p>
+<p>本文探索了如何利用最先进的生成模型来人为地增加数据集大小。</p>
+<p>最终在 $\epsilon=8/255$ 的 $l_\infty$ 和 $\epsilon=128/255$ 的 $l_0$ 范数的约束的对抗样本攻击下，比 SOTA 方法分别提升了 $7.06%$ 和 $5.88%$ 。</p>
+<h4 id="1-introduction">1. Introduction</h4>
+<p>介绍了一下对抗样本，并指出对抗训练是目前最有效的防御方法。</p>
+<p>本文贡献：</p>
+<ul>
+<li><p>展示了当与 model weight averaging 结合时，启发式驱动的增强技术，如 Cutout、CutMix 和 MixUp 如何提高鲁棒性。</p>
+</li>
+<li><p>与前人尝试了数据增强但是都没有成功相反，本文能够通过上述三种技术的任意一种来获得新的 SOTA 鲁棒性精度。并发现 CutMix 是最有效的方法，它在 CIFAR10 上达到了 $60.07%$ 的鲁棒准确率，扰动为$l_\infty ,\epsilon=8/255$ （在原先 SOTA 上提升了 $2.93%$）。</p>
+</li>
+<li><p>解释了数据驱动的增强如何帮助提高多样性并补充启发式驱动的增强。利用额外产生的输入（仅使用在原始数据上训练的生成模型产生的输入），并研究了三个最近的生成模型：去噪扩散概率模型（DDPM）、深度变分自动编码器（VDVAE）和 BigGan。</p>
+</li>
+<li><p>发现由 DDPM 生成的图像信息量更大，使我们能够在 CIFAR-10 上达到 $63.58%$ 的鲁棒准确性，扰动为$l_\infty ,\epsilon=8/255$ （在原先 SOTA 上提升了 $6.44%$）。</p>
+</li>
+<li><p>最后，本文结合了启发式和数据驱动式的方法。最终在 CIFAR-10 上，在 $\epsilon=8/255$ 的 $l_\infty$ 和 $\epsilon=128/255$ 的 $l_0$ 范数的约束的对抗样本攻击下，比 SOTA 方法分别提升了 $7.06%$ 和 $5.88%$ 。并且我们最好的模型击败了所有使用额外数据的技术。</p>
+</li>
+</ul>
+<h4 id="2-related-work">2. Related Work</h4>
+<p><strong>对抗 $l_p$ - 约束攻击</strong>：介绍了一下 FGSM，R+FGSM 和 BIM。</p>
+<p><strong>使用对抗训练进行防御</strong>：介绍了一下对抗训练。</p>
+<p><strong>启发式数据增强</strong>：指出数据增强已被证明可以减少标准（非鲁棒）训练的泛化误差，但它们在训练对抗性鲁棒网络时仍然无效。</p>
+<p><strong>数据驱动式数据增强</strong>：介绍了两种图像生成方法 AutoAugment 和 RandAugment。</p>
+<h4 id="3-preliminaries-and-hypothesis">3. Preliminaries and Hypothesis</h4>
+<p><strong>对抗训练</strong>：指出对抗训练是在求解以下问题：</p>
+<center>
+    <img loading="lazy" style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211201721895.png" width = "50%" alt="" data-is-external-image="true">
+</center>
+
+<p>其中 $D$ 代表样本 $x$ 和其相应的标签 $y$ 之间的数据分布，$f(\cdot;\theta)$ 代表被 $\theta$ 参数化的模型。$l$ 代表合适的损失函数。$\mathbb{S}$ 代表允许的扰动集合。</p>
+<p>并介绍了 PGD 算法。</p>
+<p><strong>鲁棒过拟合</strong>：测试集上的鲁棒精度迅速下降，而在训练集上继续上升(两个集上的干净精度也继续提高)。并指出原先减小鲁棒过拟合最好的方法是添加额外数据。</p>
+<p><strong>模型权重平均</strong>:可以缓解鲁棒性过拟合，并且可以让对抗性损失更加平滑。此方法是建立在实验观察之上的，WA（模型权重平均） 作者发现使用循环学习率时（如下图1），在学习率最低时，模型会停在极小值附近（如图2）。算法如算法1</p>
+<center>
+    <img loading="lazy" style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211150901007.png" width = "90%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图1:<b>顶部</b>：循环学习率。<b>底部</b>：在 CIFAR-100 上使用预激活 ResNet-164 的循环学习率计划的迭代函数测试误差。圆圈表示对应于最小学习率的迭代。
+    </div>
+</center>
+<center>
+    <img loading="lazy" style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211150933258.png" width = "100%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图2: CIFAR100 上预激活 ResNet-164 的 L2 正则化交叉熵训练损失和测试误差表面在包含（左两个）循环轨迹中的第一个、中间和最后一个点（用黑色叉号表示）的平面中和（右二个）恒定学习率计划。
+    </div>
+</center>
+
+<p><figure class="post__image"><img loading="lazy" src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211150956907.png" alt=""  data-is-external-image="true"></figure></p>
+<p><strong>Hypothese</strong>:作者观察到，无论是否出现鲁棒过拟合，使用 WA 都能提升鲁棒精确性。所以提出了这样一个假设：即当模型迭代之间的稳健准确性可以保持时，模型权重平均有助于提高稳健性。</p>
+<h4 id="4-heuristics-driven-augmentations">4. Heuristics-driven Augmentations</h4>
+<p><strong>在没有外部数据的情况下限制鲁棒性过拟合</strong>：前人表明，将 Cutout 或 MixUp 等方法与 early stopping 结合并不能提高鲁棒性。虽然这些方法并没有提升最佳精度但是减少了鲁棒性过拟合的程度。见图三。</p>
+<center>
+    <img loading="lazy" style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211151455198.png" width = "90%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图3:在使用 MixUp 或随机填充和裁剪（Pad & Crop）的标准组合时，使用和不使用模型权重平均 (WA) 时，在 CIFAR-10 上针对 ∞ = 8/255 的准确度。该模型是 WRN-28-10，该图显示了针对 PGD40 的测试集的稳健精度
+    </div>
+</center>
+**验证假设**：比较了 Pad & Crop 和 MixUp 分别添加和不添加 WA 的情况发现，WA 均可以缓解鲁棒性过拟合。如图三。
+
+<p><strong>探索启发式驱动的增强</strong>：在验证了 MixUp 能够维持鲁棒性精度，并在与 WA 结合后能够提升精度后，本文测试了其他图像补丁技术：Cutout 和 CutMix。在 6.2 节作者还评估了 AutoAugment、RandAugment 和 RICAP。</p>
+<h4 id="5-data-driven-augmentations">5. Data-driven Augmentations</h4>
+<p><strong>多样性和互补性</strong>：虽然启发式驱动的增强显著地提升了鲁棒性。但是和使用了其他数据的防御模型相比还是有很大的差距。一个合理的解释时：常见的增强技术往往会产生接近它们原始图片的增强图片，这意味着在提高泛化能力方面受到了限制。</p>
+<p><strong>生成模型</strong>：介绍了一下 BigGan、VDVAE 和 DDPM。实验发现 DDPM 与 80M-TI （真实、非生成图像）的分布更接近。BigGAN 和 VDVAE 生成的图像与其各自生成的图像更加接近，这表明这些样本要么远离训练和测试分布，要么产生过于相似的样本。</p>
+<p><strong>数据驱动的增强对鲁棒性的影响</strong>：作者测试发现只有 DDPM 生成的样本成功地防止了鲁棒的过拟合，并在学习率下降后导致稳定的性能。</p>
+<h4 id="6-experimental-results">6. Experimental Results</h4>
+<h5 id="61-实验设置">6.1 实验设置</h5>
+<p><strong>神经网络结构</strong>：使用 WRNs，WA 的衰减率分别设为 $\tau=0.999$ 和 $\tau=0.995$ ，如果没有特别说明，实验是在深度为 $28$ 且宽度乘数为 $10$ 的 WRN-28-10 的模型上进行，包含 $36$M 的参数。</p>
+<p><strong>对抗训练</strong>：本文使用 TRADES ，$10$ PGD。在没有添加其他数据时训练 400 epoch，batch size 为 512。在使用额外数据时 batch size 增加到 1024，原始数据与添加数据的比率为 0.3，并训练 800 个 CIFAR-10 等效的 epoch。</p>
+<p><strong>评估</strong>：遵循 Gowal 等人涉及的评估协议。（Uncovering the Limits of Adversarial Training against Norm-Bounded Adversarial Examples）</p>
+<h5 id="62-启发式增强">6.2 启发式增强</h5>
+<p>使用此前的 SOTA （Pad &amp; Crop）作为比较基准，本文比较了 MixUp，Cutout，CutMix 和 RICAP。结果如图四。</p>
+<center>
+    <img loading="lazy" style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211191818815.png" width = "90%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图4:使用不同的启发式增强方法在干净样本准确率和鲁棒性准确率。
+    </div>
+</center>
+在图片上可以清楚看到三个集群。第一个集群是由 AutoAugment 和 RandAugment 组成，它们提升了在干净样本上的准确率但是在鲁棒准确率上降低。第二个集群是包括 RICAP、Cutout 和 CutMix 包含三种方式用补丁遮挡局部信息。最后一个集群 MixUp 只相比基准提升了 $0.91\%$ 。一个合理的解释是 MixUp 当 $\alpha$ 很大的时候产生原理原始数据的分布或者当 $\alpha$ 较小时产生与原始样本太接近的分布。
+
+<h5 id="63-数据驱动增强">6.3 数据驱动增强</h5>
+<p>讲了一些实验设置，使用不同生成方法（VDVAE、BigGAN 和 DDPM）生成图像，并将这些生成图像按照不同的比例与原始图像混合，最终实验效果如图5。</p>
+<center>
+    <img loading="lazy" style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="https://raw.githubusercontent.com/CellNw/blog-img/master/202211201400957.png" width = "90%" alt="" data-is-external-image="true">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">
+      图5:作者比较了训练批次中原始图像与生成图像之间的比率如何影响测试鲁棒性能。
+    </div>
+</center>
+最终发现使用 DDPM 生成方法并且比率为 0.3 时鲁棒性提升最大（$+6.29\%$）。而BigGAN 和 VDVAE 仅相较于基准提升了 $1.55\%$ 和 $1.07\%$ 。
+
+<h5 id="64-组合所有的增强方法">6.4 组合所有的增强方法</h5>
+<p>使用 CutMix 加 DDPM 最终在 $l_{\infty}$ 的设置下提升了 $6.44%$，在 $l_{2}$ 的设置下提升了 $3.81%$ 。</p>
+<h4 id="7-conclusion">7. Conclusion</h4>
+<p>我们假设并证明生成的样本提供了更大的增强多样性，有助于密集图像流形并允许对抗训练远远超出了最先进的技术。我们的工作为模型权重平均对鲁棒性的影响提供了新的见解，我们希望进一步了解鲁棒性。</p>
+
+            ]]>
+        </content>
+    </entry>
+</feed>
