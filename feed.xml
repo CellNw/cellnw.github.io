@@ -3,7 +3,7 @@
     <title>Szl&#x27;s Blog</title>
     <link href="https://cellnw.github.io/feed.xml" rel="self" />
     <link href="https://cellnw.github.io" />
-    <updated>2023-04-15T18:20:14+08:00</updated>
+    <updated>2023-04-15T18:21:58+08:00</updated>
     <author>
         <name>Szl</name>
     </author>
@@ -17,7 +17,7 @@
         <link href="https://cellnw.github.io/towards-transferable-adversarial-attacks-on-vision-transformers.html"/>
         <id>https://cellnw.github.io/towards-transferable-adversarial-attacks-on-vision-transformers.html</id>
 
-        <updated>2023-04-15T18:20:14+08:00</updated>
+        <updated>2023-04-15T18:21:58+08:00</updated>
             <summary>
                 <![CDATA[
                     AAAI 2022 本文认为需要一个专门对 ViTs 设计的攻击方法，需要考虑到 patches 和自注意力机制。更具体地说，本文引入了一个双重攻击框架 Pay No Attention(PNA) attack 和 PatchOut attack 来提升对抗样本在不同 ViTs 上的迁移性。我们表明在反向传播期间跳过注意力的梯度（图1）可以生成具有高可迁移性的对抗样本。另外发现在每次迭代优化过程中采样补丁子集产生的对抗性扰动比使用所有补丁的攻击成功率更高。对抗样本在 ViTs, CNN 和鲁棒性 CNN 中的迁移性达到 SOTA。 在图1(a) 中展示了 Pay No Attention(PNA) attack，给定一个输入补丁嵌入 $Z\in\mathbb{R}^{N\times D}$，query, key 和 value 权重为 $W^Q, W^K, W^V \in\mathbb{R}^{N\times D}$ ，注意力可以被以下公式描述： $$ A=softmax(ZW^Q(ZW^K)^T)/\sqrt{D_h} $$ 其中&hellip;
@@ -66,8 +66,8 @@ $$
 <p>$$
 M_p^i=\left{
 \begin{aligned}
-1, &amp;\quad \text{if}\enspace x_p^i \enspace\text{in}\enspace x_s\
-0,&amp; \quad\text{otherwise}
+1, \quad \text{if}\enspace x_p^i \enspace\text{in}\enspace x_s\
+0, \quad\text{otherwise}
 \end{aligned}
 \right.
 $$</p>
