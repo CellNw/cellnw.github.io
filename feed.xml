@@ -3,7 +3,7 @@
     <title>cellnw&#x27;s Blog</title>
     <link href="https://cellnw.github.io/feed.xml" rel="self" />
     <link href="https://cellnw.github.io" />
-    <updated>2025-06-16T21:16:40+08:00</updated>
+    <updated>2025-06-17T08:40:56+08:00</updated>
     <author>
         <name>cellnw</name>
     </author>
@@ -21,13 +21,13 @@
         <updated>2025-06-13T08:53:02+08:00</updated>
             <summary>
                 <![CDATA[
-                    文末有标准答案下载 问： 假设上面的强化学习算法不是对战随机对手，而是以左右互博的方式自己与自己对战来训练自己。你认为在这种情况下会发生怎样的事情？它是否会学习到不同的策略？ 答： 1、我认为在训练初期，两者的价值函数$V(\cdot)$会震荡，这是因为在训练初期，模型并不是很会玩井字棋，所以两个模型一方面学会利用对方的破绽，另一方面也会弥补自己的破绽，所以价值函数$V(\cdot)$会随着这一过程变化。如果训练顺利的话最终两个模型的价值函数$V(\cdot)$将会收敛成只能平局的样子；2、它们会学到不同的策略，因为在训练开始时两个模型由于探索过程的随机性会产生不同的棋路，也就是说两个模型说面对的环境是不一样的，故它们会学习到不同的策略。 Translation of answer: 1. I believe that in the early stages of training, the value functions $V(\cdot)$ of both agents will fluctuate. This is because, at the beginning, the models are not yet proficient at playing Tic-Tac-Toe. As a result,&hellip;
+                    以下为个人答案、官方答案在文末 问： 假设上面的强化学习算法不是对战随机对手，而是以左右互博的方式自己与自己对战来训练自己。你认为在这种情况下会发生怎样的事情？它是否会学习到不同的策略？ 答： 1、我认为在训练初期，两者的价值函数$V(\cdot)$会震荡，这是因为在训练初期，模型并不是很会玩井字棋，所以两个模型一方面学会利用对方的破绽，另一方面也会弥补自己的破绽，所以价值函数$V(\cdot)$会随着这一过程变化。如果训练顺利的话最终两个模型的价值函数$V(\cdot)$将会收敛成只能平局的样子；2、它们会学到不同的策略，因为在训练开始时两个模型由于探索过程的随机性会产生不同的棋路，也就是说两个模型说面对的环境是不一样的，故它们会学习到不同的策略。 Translation of answer: 1. I believe that in the early stages of training, the value functions $V(\cdot)$ of both agents will fluctuate. This is because, at the beginning, the models are not yet proficient at playing Tic-Tac-Toe. As a result,&hellip;
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
                 <blockquote>
-<p>文末有标准答案下载</p></blockquote>
+<p>以下为个人答案、官方答案在文末</p></blockquote>
 <h6 id="练习11-左右互博">练习1.1 左右互博</h6>
 <p><strong>问：</strong> 假设上面的强化学习算法不是对战随机对手，而是以左右互博的方式自己与自己对战来训练自己。你认为在这种情况下会发生怎样的事情？它是否会学习到不同的策略？</p><p><strong>答：</strong> 1、我认为在训练初期，两者的价值函数$V(\cdot)$会震荡，这是因为在训练初期，模型并不是很会玩井字棋，所以两个模型一方面学会利用对方的破绽，另一方面也会弥补自己的破绽，所以价值函数$V(\cdot)$会随着这一过程变化。如果训练顺利的话最终两个模型的价值函数$V(\cdot)$将会收敛成只能平局的样子；2、它们会学到不同的策略，因为在训练开始时两个模型由于探索过程的随机性会产生不同的棋路，也就是说两个模型说面对的环境是不一样的，故它们会学习到不同的策略。</p><p><strong>Translation of answer:</strong> 1. I believe that in the early stages of training, the value functions $V(\cdot)$ of both agents will fluctuate. This is because, at the beginning, the models are not yet proficient at playing Tic-Tac-Toe. As a result, each model will learn to exploit the weaknesses of the other while also correcting its own flaws, causing the value functions $V(\cdot)$ to change during this process. If the training proceeds well, the value functions $V(\cdot)$ of both models will eventually converge to a state where the game always ends in a draw; 2. They will learn different strategies, because at the start of training, due to the randomness inherent in exploration, the two models will follow different paths of play. In other words, they face slightly different environments, leading them to learn distinct strategies.</p><h6 id="练习12-对称性">练习1.2 对称性</h6>
 <p><strong>问：</strong> 由于对称性，井字棋的很多位置看起来不同但其实是相同的。我们如何利用这一点来修改上面提到的学习过程呢？这种改变会怎样改善学习过程？假设对方没有利用对称性，那我们应该利用吗？对称相等的位置是否必然具有相同的价值呢？</p><p><strong>答：</strong> 1、井字棋的棋盘具有旋转45°、90°或135°后以及水平、垂直或中心对称后棋面等价的性质，那么我们可以利用这些特性将棋面的状态进行压缩，具体来说就是将任意的棋面利用上述特性进行映射，映射成总是从左上角开始下的样子；2、这样的话价值函数$V(\cdot)$的取值范围将会变小，这样加速函数的收敛；3、我们不应当利用对称性，虽然棋面看起来是等价的，但对方没有利用对称性，那么棋面所对应后续落子的价值是不同的；4、并不是，例如上面提到的当对手没有利用对称性时，那么对称相等的位置的价值就是不同的。</p><p><strong>Translation of answer:</strong> 1. The tic-tac-toe board has symmetrical properties such as equivalence under 45°, 90°, or 135° rotations, as well as horizontal, vertical, and central reflections. We can exploit these properties to compress the state space by mapping any board configuration to a canonical form—for example, always representing the board as if the moves started from the top-left corner; 2. This compression reduces the range of the value function $V(\cdot)$, which in turn can accelerate the convergence of the learning process; 3. we should not make use of symmetry if the opponent does not exploit it. Even though board states may appear symmetrical, the value of future moves may differ depending on the opponent’s asymmetric strategy; 4. symmetric positions do not necessarily have the same value. As mentioned above, if the opponent does not account for symmetry, then symmetric positions can indeed have different expected values.</p><h6 id="练习13-贪心策略">练习1.3 贪心策略</h6>
